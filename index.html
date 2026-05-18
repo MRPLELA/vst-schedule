@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="ตารางเรียน">
+<title>ปฏิทิน ตารางเรียน วษท.2/69</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --green:#1B5E3B;--green-mid:#2D7A52;--green-light:#E8F5EE;--green-soft:#C8E6D4;
+  --amber:#B45309;--amber-light:#FEF3C7;
+  --red:#991B1B;--red-light:#FEE2E2;
+  --blue:#1E40AF;--blue-light:#DBEAFE;
+  --surf:#F9FAF8;--card:#FFFFFF;--border:#E2E8E4;
+  --txt:#111814;--txt2:#4A5550;--txt3:#8A9690;
+  --font:'Sarabun',sans-serif;
+  --safe-bottom:env(safe-area-inset-bottom,0px);
+}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--font);background:var(--surf);color:var(--txt);font-size:14px}
+
+.shell{display:flex;flex-direction:column;height:100vh;max-width:430px;margin:0 auto;background:var(--surf)}
+
+/* Top bar */
+.topbar{background:var(--green);padding:12px 16px;padding-top:calc(12px + env(safe-area-inset-top,0px));color:#fff;flex-shrink:0}
+.topbar-row{display:flex;align-items:center;justify-content:space-between}
+.topbar-title{font-size:16px;font-weight:700}
+.topbar-sub{font-size:11px;opacity:.7;margin-top:1px}
+.topbar-btn{background:rgba(255,255,255,.18);border:none;color:#fff;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px}
+.topbar-btn:active{background:rgba(255,255,255,.32)}
+
+/* Tabs */
+.tabs{display:flex;background:var(--card);border-bottom:1.5px solid var(--border);flex-shrink:0}
+.tab{flex:1;padding:10px 4px 9px;text-align:center;font-size:11px;font-weight:700;color:var(--txt3);border:none;background:none;cursor:pointer;border-bottom:2.5px solid transparent;font-family:var(--font);transition:color .15s,border-color .15s}
+.tab i{display:block;font-size:21px;margin-bottom:1px}
+.tab.on{color:var(--green);border-bottom-color:var(--green)}
+
+/* Scroll area */
+.scroll-area{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
+
+/* Screens */
+.scr{display:none;padding-bottom:calc(80px + var(--safe-bottom))}
+.scr.on{display:block}
+
+/* Calendar */
+.cal-wrap{padding:14px 14px 0}
+.month-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.mo-btn{background:none;border:1.5px solid var(--border);width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;color:var(--txt2)}
+.mo-btn:active{background:var(--green-light)}
+.mo-label{font-size:17px;font-weight:700;color:var(--txt)}
+.dow-hdr{display:grid;grid-template-columns:repeat(7,1fr);margin-bottom:5px}
+.dow-cell{text-align:center;font-size:11px;font-weight:700;color:var(--txt3);padding:4px 0}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.day{min-height:44px;border-radius:9px;padding:4px 2px 3px;cursor:pointer;border:1.5px solid transparent;display:flex;flex-direction:column;align-items:center;user-select:none}
+.day.empty{pointer-events:none}
+.day.other .dn{color:var(--txt3);opacity:.35}
+.day:not(.empty):active{background:var(--green-light)}
+.day.today{background:var(--green-light);border-color:var(--green-soft)}
+.day.today .dn{color:var(--green);font-weight:700}
+.day.sel{background:var(--green);border-color:var(--green)}
+.day.sel .dn{color:#fff;font-weight:700}
+.dn{font-size:13px;font-weight:500;line-height:1.2}
+.dot-row{display:flex;gap:2px;margin-top:2px;justify-content:center}
+.dot{width:5px;height:5px;border-radius:50%}
+.dot.cls{background:var(--green-mid)}
+.dot.vrn{background:var(--amber)}
+.day.sel .dot.cls{background:rgba(255,255,255,.85)}
+.day.sel .dot.vrn{background:#FCD34D}
+
+/* Legend */
+.legend{display:flex;gap:14px;align-items:center;padding:9px 14px;background:var(--card);border-bottom:1px solid var(--border);font-size:11px;color:var(--txt2);font-weight:500}
+.ldot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:4px}
+
+/* Day panel */
+.day-panel{margin:12px 14px 0;background:var(--card);border-radius:14px;border:1px solid var(--border);overflow:hidden}
+.dp-hdr{padding:11px 16px;background:var(--green);color:#fff;display:flex;justify-content:space-between;align-items:center}
+.dp-hdr-date{font-size:13px;font-weight:700}
+.dp-hdr-count{font-size:11px;opacity:.75}
+.dp-body{padding:10px 12px}
+.no-ev{text-align:center;padding:22px 0;color:var(--txt3);font-size:13px}
+.no-ev i{font-size:28px;display:block;margin-bottom:5px}
+
+/* Event cards */
+.ecard{border-radius:10px;border:1px solid var(--border);margin-bottom:8px;overflow:hidden}
+.ecard:last-child{margin-bottom:0}
+.ebar{padding:5px 12px;font-size:12px;font-weight:700;display:flex;align-items:center;gap:5px;flex-wrap:wrap}
+.ebar.am{background:var(--blue-light);color:var(--blue)}
+.ebar.pm{background:var(--amber-light);color:var(--amber)}
+.ebar.vr{background:var(--red-light);color:var(--red)}
+.ebody{padding:9px 12px;background:var(--card)}
+.ename{font-size:14px;font-weight:700;color:var(--txt);margin-bottom:3px;line-height:1.35}
+.ecode{font-size:11px;color:var(--txt3);margin-bottom:6px}
+.etags{display:flex;gap:6px;flex-wrap:wrap}
+.etag{font-size:11px;padding:2px 9px;border-radius:20px;display:inline-flex;align-items:center;gap:3px;font-weight:500}
+.etag i{font-size:12px}
+.tg{background:var(--green-light);color:var(--green)}
+.tgray{background:#F0F2F1;color:var(--txt2)}
+.badge{font-size:10px;padding:1px 7px;border-radius:5px;font-weight:700;vertical-align:middle}
+.b-adj{background:#FEE2D5;color:#C84B11}
+.b-vr{background:var(--red-light);color:var(--red)}
+
+/* List */
+.list-wrap{padding:12px 14px}
+.lg-hdr{font-size:11px;font-weight:700;color:var(--txt3);letter-spacing:.06em;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.lg-hdr::after{content:'';flex:1;height:1px;background:var(--border)}
+.lg{margin-bottom:18px}
+
+/* Add screen */
+.add-wrap{padding:14px}
+.fc{background:var(--card);border-radius:14px;border:1px solid var(--border);padding:16px;margin-bottom:14px}
+.fc-ttl{font-size:14px;font-weight:700;color:var(--green);margin-bottom:14px;display:flex;align-items:center;gap:6px}
+.fc-ttl i{font-size:18px}
+.fr{margin-bottom:11px}
+.fr label{display:block;font-size:12px;font-weight:600;color:var(--txt2);margin-bottom:4px}
+.fr input,.fr select,.fr textarea{width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:9px;font-size:13px;font-family:var(--font);background:var(--surf);color:var(--txt);outline:none;-webkit-appearance:none;appearance:none}
+.fr input:focus,.fr select:focus,.fr textarea:focus{border-color:var(--green-mid)}
+.fr textarea{height:64px;resize:none}
+.fr2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.btn-save{width:100%;padding:13px;background:var(--green);color:#fff;border:none;border-radius:11px;font-size:15px;font-weight:700;cursor:pointer;font-family:var(--font)}
+.btn-save:active{background:var(--green-mid)}
+.mr{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)}
+.mr:last-child{border-bottom:none}
+.mr-name{font-size:13px;font-weight:600;color:var(--txt)}
+.mr-meta{font-size:11px;color:var(--txt3);margin-top:1px}
+.del-btn{background:none;border:none;color:var(--txt3);font-size:18px;cursor:pointer;padding:6px;display:flex;align-items:center}
+.del-btn:active{color:var(--red)}
+
+/* สไตล์เฉพาะสำหรับตัวเลือกติ๊กทั้งวัน */
+.chk-row{display:flex;align-items:center;gap:8px;margin-bottom:11px;user-select:none;cursor:pointer}
+.chk-row input[type="checkbox"]{-webkit-appearance:checkbox;appearance:checkbox;width:16px;height:16px;accent-color:var(--green);cursor:pointer}
+.chk-row label{font-size:13px;font-weight:600;color:var(--txt2);cursor:pointer}
+
+/* Bottom nav */
+.bnav{background:var(--card);border-top:1px solid var(--border);display:flex;padding:6px 0;padding-bottom:calc(6px + var(--safe-bottom));flex-shrink:0}
+.bnav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:1px;border:none;background:none;font-size:10px;font-weight:700;color:var(--txt3);cursor:pointer;padding:4px;font-family:var(--font)}
+.bnav-btn i{font-size:22px}
+.bnav-btn.on{color:var(--green)}
+
+/* Toast */
+.toast{position:fixed;bottom:calc(90px + var(--safe-bottom));left:50%;transform:translateX(-50%) translateY(10px);background:#111814;color:#fff;padding:9px 22px;border-radius:22px;font-size:13px;font-weight:500;opacity:0;transition:all .25s;pointer-events:none;z-index:999;white-space:nowrap;font-family:var(--font)}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+
+</head>
+<body>
+<div class="shell">
+
+<div class="topbar">
+  <div class="topbar-row">
+    <div>
+      <div class="topbar-title">ปฏิทิน ตารางเรียน วษท.2/69</div>
+      <div class="topbar-title">ปวส.1 สัตวศาสตร์ • ภาคเรียนที่ 1/2569</div>
+      <div class="topbar-sub">จัดทำโดย นาย ชาณัฐ เพ็ชรกระต่าย</div>
+    </div>
+    <button class="topbar-btn" onclick="goToday()" aria-label="กลับวันนี้">
+      <i class="ti ti-calendar-event"></i>
+    </button>
+  </div>
+</div>
+
+<div class="tabs">
+  <button class="tab on" onclick="show('cal',this,0)"><i class="ti ti-calendar-month"></i>ปฏิทิน</button>
+  <button class="tab" onclick="show('list',this,1)"><i class="ti ti-list-details"></i>รายการ</button>
+  <button class="tab" onclick="show('add',this,2)"><i class="ti ti-circle-plus"></i>เพิ่ม</button>
+</div>
+
+<div class="scroll-area">
+
+  <div id="scr-cal" class="scr on">
+    <div class="cal-wrap">
+      <div class="month-nav">
+        <button class="mo-btn" onclick="chMo(-1)" aria-label="เดือนก่อน"><i class="ti ti-chevron-left"></i></button>
+        <div class="mo-label" id="mo-lbl"></div>
+        <button class="mo-btn" onclick="chMo(1)" aria-label="เดือนถัดไป"><i class="ti ti-chevron-right"></i></button>
+      </div>
+      <div class="dow-hdr">
+        <div class="dow-cell">อา</div><div class="dow-cell">จ</div><div class="dow-cell">อ</div>
+        <div class="dow-cell">พ</div><div class="dow-cell">พฤ</div><div class="dow-cell">ศ</div><div class="dow-cell">ส</div>
+      </div>
+      <div class="cal-grid" id="cal-grid"></div>
+    </div>
+    <div class="legend">
+      <span><span class="ldot" style="background:#2D7A52"></span>วันและวิชาที่เรียน</span>
+      <span><span class="ldot" style="background:#B45309"></span>วันส่งงาน</span>
+    </div>
+    <div class="day-panel" id="day-panel" style="display:none">
+      <div class="dp-hdr">
+        <span class="dp-hdr-date" id="dp-date"></span>
+        <span class="dp-hdr-count" id="dp-count"></span>
+      </div>
+      <div class="dp-body" id="dp-body"></div>
+    </div>
+  </div>
+
+  <div id="scr-list" class="scr">
+    <div class="list-wrap" id="list-inner"></div>
+  </div>
+
+  <div id="scr-add" class="scr">
+    <div class="add-wrap">
+      <div class="fc">
+        <div class="fc-ttl"><i class="ti ti-plus-circle" aria-hidden="true"></i>เพิ่มรายวิชา / กิจกรรม / กำหนดส่งงาน</div>
+        
+        <div class="fr2">
+          <div class="fr"><label>ผู้สอน</label>
+            <select id="ft" onchange="autoFillTeacher(this.value)">
+              <option value="">-- เลือกผู้สอน --</option>
+              <option value="อ.สมเจตน์ พันธ์รอด">อ.สมเจตน์ พันธ์รอด</option>
+              <option value="อ.จีรวรรณ จันทร์ศิริ">อ.จีรวรรณ จันทร์ศิริ</option>
+              <option value="อ.ศิริวรรณ แก้วอัญญกิจ">อ.ศิริวรรณ แก้วอัญญกิจ</option>
+              <option value="อ.ฐินวัสน์ ฤทธิ์ดี">อ.ฐินวัสน์ ฤทธิ์ดี</option>
+              <option value="อ.สุชัญญา อ่อนศรี">อ.สุชัญญา อ่อนศรี</option>
+              <option value="อ.นิรมล สิทธิชัย">อ.นิรมล สิทธิชัย</option>
+              <option value="อ.นุชนารถ ช่างโคกสูง">อ.นุชนารถ ช่างโคกสูง</option>
+              <option value="อ.ธีรพงศ์ สีหะวงษ์">อ.ธีรพงศ์ สีหะวงษ์</option>
+              <option value="อ.อภิสิทธิ์ ทองดี">อ.อภิสิทธิ์ ทองดี</option>
+              <option value="อ.ศุภชัย สิริเมษสุธา">อ.ศุภชัย สิริเมษสุธา</option>
+              <option value="อ.กันตภณ บุญกิจสุวรรณ">อ.กันตภณ บุญกิจสุวรรณ</option>
+            </select>
+          </div>
+          <div class="fr"><label>เบอร์โทร</label><input type="text" id="fp" placeholder="กรุณาเลือกผู้สอนก่อน" readonly style="background: #f0f0f0; color: #666;"></div>
+        </div>  
+
+        <div class="fr">
+          <label>ชื่อรายวิชา</label>
+          <input type="text" id="fn" placeholder="กรุณาเลือกผู้สอนเพื่อดึงชื่อวิชาอัตโนมัติ" readonly style="background: #f0f0f0; color: #666;">
+        </div>
+
+        <div class="fr2">
+          <div class="fr"><label>รหัสวิชา</label><input type="text" id="fc-code" placeholder="เลือกผู้สอน" readonly style="background: #f0f0f0; color: #666;"></div>
+          <div class="fr"><label>หน่วยกิต</label><input type="text" id="fcr" placeholder="เลือกผู้สอน" readonly style="background: #f0f0f0; color: #666;"></div>
+        </div>
+
+        <div class="fr">
+          <label>ชื่อกิจกรรม / อื่นๆ (พิมพ์เองอิสระ)</label>
+          <input type="text" id="f-act" placeholder="เช่น ประชุมกลุ่ม, กำหนดส่งงาน, กิจกรรมสถาบัน">
+        </div>
+        
+        <div class="fr2">
+          <div class="fr"><label>วันที่ (หลัก)</label><input type="date" id="fd"></div>
+          <div class="fr"><label>วันเพิ่มเติม (คั่น ,)</label><input type="text" id="fdm" placeholder="17/05/69, 24/05/69"></div>
+        </div>
+        
+        <div class="chk-row">
+          <input type="checkbox" id="f-all-day" onchange="toggleAllDay(this.checked)">
+          <label for="f-all-day">ทั้งวัน (หากกำหนดส่งงานให้เลือก)</label>
+        </div>
+
+        <div class="fr2">
+          <div class="fr"><label>เวลาเริ่ม</label><input type="time" id="fs" value="08:00"></div>
+          <div class="fr"><label>เวลาสิ้นสุด</label><input type="time" id="fe" value="12:00"></div>
+        </div>
+        
+          <div class="fr"><label>ประเภท (เลือกเป็นวิชาเรียนหรือส่งงาน)</label>
+            <select id="ftype">
+              <option value="class">วิชาเรียน</option>
+              <option value="vern">วันส่งงาน</option>
+              <option value="other">อื่นๆ</option>
+            </select>
+          </div>
+        <div class="fr"><label>หมายเหตุ</label><textarea id="fnote" placeholder="เช่น ปรับพื้นฐาน, สถานที่..."></textarea></div>
+        <button class="btn-save" onclick="saveItem()">บันทึก</button>
+      </div>
+      <div class="fc">
+        <div class="fc-ttl"><i class="ti ti-list-details" aria-hidden="true"></i>รายการทั้งหมด (<span id="item-count">0</span>)</div>
+        <div id="manage-list"></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="bnav">
+  <button class="bnav-btn on" onclick="show('cal',this,0)"><i class="ti ti-calendar-month"></i>ปฏิทิน</button>
+  <button class="bnav-btn" onclick="show('list',this,1)"><i class="ti ti-list-details"></i>รายการ</button>
+  <button class="bnav-btn" onclick="show('add',this,2)"><i class="ti ti-circle-plus"></i>เพิ่ม</button>
+</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const TM=['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
+const TD=['อาทิตย์','จันทร์','อังคาร','พุธ','พฤหัสบดี','ศุกร์','เสาร์'];
+
+const INIT=[
+  {id:1,type:'class',name:'การพัฒนาสุขภาพ',code:'30000-1601',credit:'2-0-2',dates:['2026-05-17','2026-05-24','2026-05-31','2026-06-07'],start:'08:00',end:'12:00',teacher:'อ.สมเจตน์ พันธ์รอด',phone:'062-578-2656',note:''},
+  {id:2,type:'class',name:'สังคมไทยในยุคดิจิทัล',code:'30000-1501',credit:'1-2-2',dates:['2026-05-17','2026-05-24','2026-05-31','2026-06-07'],start:'13:00',end:'17:00',teacher:'อ.จีรวรรณ จันทร์ศิริ',phone:'082-697-5919',note:''},
+  {id:3,type:'class',name:'ภาษาอังกฤษสำหรับงานอาชีพ',code:'30000-1201',credit:'1-2-2',dates:['2026-06-14','2026-06-21','2026-06-28','2026-07-05'],start:'08:00',end:'12:00',teacher:'อ.ศิริวรรณ แก้วอัญญกิจ',phone:'082-404-5699',note:''},
+  {id:4,type:'class',name:'คณิตศาสตร์และสถิติเพื่องานอาชีพ',code:'30000-1401',credit:'3-0-3',dates:['2026-06-14','2026-06-21','2026-06-28','2026-07-05'],start:'13:00',end:'17:00',teacher:'อ.ฐินวัสน์ ฤทธิ์ดี',phone:'086-374-3194',note:''},
+  {id:5,type:'class',name:'การเป็นผู้ประกอบการ',code:'30001-1001',credit:'2-2-3',dates:['2026-07-12','2026-07-19','2026-07-26','2026-08-02'],start:'08:00',end:'12:00',teacher:'อ.สุชัญญา อ่อนศรี',phone:'091-854-0239',note:''},
+  {id:6,type:'class',name:'ทักษะภาษาไทยเพื่อการสื่อสารในงานอาชีพ',code:'30000-1101',credit:'1-2-2',dates:['2026-07-12','2026-07-19','2026-07-26','2026-08-02'],start:'13:00',end:'17:00',teacher:'อ.นิรมล สิทธิชัย',phone:'089-639-9896',note:''},
+  {id:7,type:'class',name:'จุลชีววิทยา',code:'31700-1008',credit:'2-2-3',dates:['2026-08-08','2026-08-09','2026-08-15','2026-08-16'],start:'08:00',end:'12:00',teacher:'อ.นุชนารถ ช่างโคกสูง',phone:'090-817-8040',note:''},
+  {id:8,type:'class',name:'การผลิตโคเนื้อ',code:'31703-2012',credit:'2-3-3',dates:['2026-08-08','2026-08-09','2026-08-15','2026-08-16'],start:'13:00',end:'17:00',teacher:'อ.ธีรพงศ์ สีหะวงษ์',phone:'098-719-5428',note:''},
+  {id:9,type:'class',name:'กิจกรรมเสริมสร้างสุจริต จิตอาสา',code:'30000-2001',credit:'0-2-0',dates:['2026-08-22','2026-08-23','2026-08-29','2026-08-30'],start:'08:00',end:'12:00',teacher:'อ.อภิสิทธิ์ ทองดี',phone:'092-546-3238',note:''},
+  {id:10,type:'class',name:'อาชีวอนามัยและความปลอดภัย',code:'31700-0010',credit:'2-0-2',dates:['2026-08-22','2026-08-23','2026-08-29','2026-08-30'],start:'13:00',end:'17:00',teacher:'อ.สมเจตน์ พันธ์รอด',phone:'062-578-2656',note:'ปรับพื้นฐาน'},
+  {id:11,type:'class',name:'หลักการเลี้ยงสัตว์',code:'31700-0003',credit:'0-2-0',dates:['2026-09-05','2026-09-06','2026-09-12','2026-09-13'],start:'08:00',end:'12:00',teacher:'อ.ศุภชัย สิริเมษสุธา',phone:'062-254-2522',note:'ปรับพื้นฐาน'},
+  {id:12,type:'class',name:'ปฏิบัติงานเกษตร',code:'31700-0016',credit:'0-4-2',dates:['2026-09-05','2026-09-06','2026-09-12','2026-09-13'],start:'13:00',end:'17:00',teacher:'อ.กันตภณ บุญกิจสุวรรณ',phone:'061-795-9994',note:'ปรับพื้นฐาน'},
+];
+
+// ==========================================
+// 2. ฝังคีย์เซิร์ฟเวอร์ฐานข้อมูลโปรเจกต์ของคุณณัฐ
+// ==========================================
+const firebaseConfig = {
+  apiKey: "AIzaSyB8baqTRGzRuwytClxrj3M4gbf8ayU6cig",
+  authDomain: "vst-schedule.firebaseapp.com",
+  databaseURL: "https://vst-schedule-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "vst-schedule",
+  storageBucket: "vst-schedule.firebasestorage.app",
+  messagingSenderId: "22067134829",
+  appId: "1:22067134829:web:31b2de1f558f51ff30da64",
+  measurementId: "G-5RTYSJBLD9"
+};
+
+// สั่งเปิดระบบคลาวด์ Firebase หลังบ้าน
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+let items = [], nid = 1, CY, CM, selDate=null;
+
+// ==========================================
+// 3. ปรับฟังก์ชันดึงข้อมูลให้ดึงแบบ Realtime จาก Firebase แทนที่ LocalStorage
+// ==========================================
+function loadData(){
+  db.ref('sched_vst269').on('value', (snapshot) => {
+    const data = snapshot.val();
+    if(data){
+      // แปลง Object โครงสร้างคลาวด์มาเป็นรูปแบบ Array บอร์ดหน้าบ้าน
+      items = Object.keys(data).map(key => ({
+        dbKey: key, // ผูกรหัส Key พิเศษเอาไว้เผื่อสำหรับสั่งลบ
+        ...data[key]
+      }));
+    } else {
+      // หากเข้าใช้งานระบบครั้งแรกและฐานข้อมูลยังโล่งอยู่ ให้ดันข้อมูลคงที่ INIT ตั้งต้นสวมเข้าไปทันที
+      items = JSON.parse(JSON.stringify(INIT));
+      items.forEach(item => {
+        db.ref('sched_vst269').push(item);
+      });
+    }
+    // หาเลข ID สูงสุดมาบวกหนึ่งป้องกันรหัสซ้ำ
+    nid = items.length ? Math.max(...items.map(x => x.id || 0)) + 1 : 1;
+    
+    // สั่งรีเฟรชอัปเดตหน้าจอแชร์ร่วมกันสดๆ ทันที
+    renderCal();
+    if(document.getElementById('scr-list').classList.contains('on')) renderList();
+    if(document.getElementById('scr-add').classList.contains('on')) renderManage();
+  });
+}
+
+function saveData(){
+  // ยกเลิกฟังก์ชันนี้เนื่องจากระบบเปลี่ยนสไตล์ไปคุยยิงพุ่งตรงขึ้นคลาวด์ Firebase แล้ว
+}
+
+function ds(y,m,d){return y+'-'+(m<10?'0'+m:m)+'-'+(d<10?'0'+d:d)}
+function evtsFor(dateStr){return items.filter(x=>(x.dates||[]).includes(dateStr)).sort((a,b)=>a.start.localeCompare(b.start))}
+function clsDates(){const s=new Set();items.filter(x=>x.type==='class').forEach(x=>(x.dates||[]).forEach(d=>s.add(d)));return s}
+function vrnDates(){const s=new Set();items.filter(x=>x.type==='vern').forEach(x=>(x.dates||[]).forEach(d=>s.add(d)));return s}
+function allDates(){const s=new Set();items.forEach(x=>(x.dates||[]).forEach(d=>s.add(d)));return s}
+
+function renderCal(){
+  document.getElementById('mo-lbl').textContent=TM[CM]+' '+(CY+543);
+  const g=document.getElementById('cal-grid');
+  g.innerHTML='';
+  const first=new Date(CY,CM,1).getDay();
+  const dmax=new Date(CY,CM+1,0).getDate();
+  const prev=new Date(CY,CM,0).getDate();
+  const n=new Date();
+  const tod=ds(n.getFullYear(),n.getMonth()+1,n.getDate());
+  const CS=clsDates(), VS=vrnDates();
+
+  function cell(d,dateStr,extra){
+    const el=document.createElement('div');
+    el.className='day '+extra;
+    const hc=CS.has(dateStr), hv=VS.has(dateStr);
+    el.innerHTML=`<span class="dn">${d}</span><div class="dot-row">${hc?'<div class="dot cls"></div>':''}${hv?'<div class="dot vrn"></div>':''}</div>`;
+    return el;
+  }
+
+  for(let i=0;i<first;i++){
+    const d=prev-first+1+i;
+    const m=CM===0?12:CM, y=CM===0?CY-1:CY;
+    g.appendChild(cell(d,ds(y,m,d),'other'));
+  }
+  for(let d=1;d<=dmax;d++){
+    const dateStr=ds(CY,CM+1,d);
+    let cls=(dateStr===tod?'today ':'')+( dateStr===selDate?'sel ':'');
+    const el=cell(d,dateStr,cls.trim());
+    el.addEventListener('click',()=>pickDay(dateStr));
+    g.appendChild(el);
+  }
+  const rem=42-(first+dmax);
+  for(let d=1;d<=rem;d++){
+    const m=CM===11?1:CM+2, y=CM===11?CY+1:CY;
+    g.appendChild(cell(d,ds(y,m,d),'other'));
+  }
+  if(selDate) renderPanel(selDate);
+}
+
+function pickDay(dateStr){selDate=dateStr;renderCal();renderPanel(dateStr);}
+
+function eCard(ev){
+  const isV=ev.type==='vern';
+  const barCls=isV?'vr':(parseInt(ev.start)<12?'am':'pm');
+  const isAdj=ev.note&&ev.note.includes('ปรับพื้นฐาน');
+  return `<div class="ecard">
+    <div class="ebar ${barCls}">
+      <i class="ti ti-clock" style="font-size:13px" aria-hidden="true"></i>${ev.start} – ${ev.end} น.
+      ${isV?`<span class="badge b-vr">${ev.note||'วันส่งงาน'}</span>`:''}
+      ${isAdj?'<span class="badge b-adj">ปรับพื้นฐาน</span>':''}
+    </div>
+    <div class="ebody">
+      <div class="ename">${ev.name}</div>
+      ${ev.code?`<div class="ecode">${ev.code}${ev.credit?' | '+ev.credit:''}</div>`:''}
+      <div class="etags">
+        ${ev.teacher?`<span class="etag tg"><i class="ti ti-user" aria-hidden="true"></i>${ev.teacher}</span>`:''}
+        ${ev.phone?`<span class="etag tgray"><i class="ti ti-phone" aria-hidden="true"></i>${ev.phone}</span>`:''}
+        ${ev.note&&!isAdj&&!isV?`<span class="etag tgray">${ev.note}</span>`:''}
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderPanel(dateStr){
+  const p=document.getElementById('day-panel');
+  p.style.display='block';
+  const [y,m,d]=dateStr.split('-').map(Number);
+  const dow=new Date(y,m-1,d).getDay();
+  document.getElementById('dp-date').textContent=`${TD[dow]} ${d} ${TM[m-1]} ${y+543}`;
+  const evts=evtsFor(dateStr);
+  document.getElementById('dp-count').textContent=evts.length?`${evts.length} รายการ`:'ไม่มีกิจกรรม';
+  const b=document.getElementById('dp-body');
+  b.innerHTML=evts.length?evts.map(eCard).join(''):`<div class="no-ev"><i class="ti ti-coffee" aria-hidden="true"></i>ไม่มีกิจกรรมวันนี้</div>`;
+}
+
+function renderList(){
+  const el=document.getElementById('list-inner');
+  const all=[...allDates()].sort();
+  if(!all.length){el.innerHTML='<div style="text-align:center;padding:40px 0;color:var(--txt3)">ยังไม่มีข้อมูล</div>';return;}
+  el.innerHTML=all.map(dateStr=>{
+    const [y,m,d]=dateStr.split('-').map(Number);
+    const dow=new Date(y,m-1,d).getDay();
+    const evts=evtsFor(dateStr);
+    return `<div class="lg"><div class="lg-hdr">${TD[dow]} ${d} ${TM[m-1]} ${y+543}</div>${evts.map(eCard).join('')}</div>`;
+  }).join('');
+}
+
+function renderManage(){
+  document.getElementById('item-count').textContent=items.length;
+  const el=document.getElementById('manage-list');
+  el.innerHTML=items.length?items.map(x=>`
+    <div class="mr">
+      <div>
+        <div class="mr-name">${x.name}</div>
+        <div class="mr-meta">${x.type==='vern'?'วันส่งงาน':'วิชา'} • ${(x.dates||[]).length} วัน</div>
+      </div>
+      <button class="del-btn" onclick="delItem('${x.id}', '${x.dbKey || ""}')" aria-label="ลบ ${x.name}"><i class="ti ti-trash" aria-hidden="true"></i></button>
+    </div>`).join(''):'<div style="color:var(--txt3);font-size:13px;text-align:center;padding:12px">ยังไม่มีรายการ</div>';
+}
+
+// ==========================================
+// 4. แก้ไขปุ่มลบให้ลบก้อนบนเซิร์ฟเวอร์ Firebase ออนไลน์ร่วมกัน
+// ==========================================
+function delItem(id, dbKey){
+  if(!confirm('ลบรายการนี้ร่วมกันสำหรับทุกคนบนออนไลน์?')) return;
+  if(dbKey) {
+    db.ref('sched_vst269/' + dbKey).remove()
+      .then(() => toast('ลบรายการสำเร็จแล้ว'))
+      .catch(e => toast('เกิดข้อผิดพลาดในการลบ'));
+  } else {
+    const target = items.find(x => String(x.id) === String(id));
+    if(target && target.dbKey){
+      db.ref('sched_vst269/' + target.dbKey).remove().then(() => toast('ลบแล้ว'));
+    } else {
+      toast('ไม่พบคีย์ในฐานข้อมูลออนไลน์');
+    }
+  }
+}
+
+// 📍 ฟังก์ชันคุมการติ๊ก ทั้งวัน (คงโครงสร้างเดิมจาก indexGemi)
+function toggleAllDay(isAllDay) {
+  const fs = document.getElementById('fs');
+  const fe = document.getElementById('fe');
+  if (isAllDay) {
+    fs.value = "00:00";
+    fe.value = "23:59";
+    fs.disabled = true;
+    fe.disabled = true;
+    fs.style.background = "#e5e7eb";
+    fe.style.background = "#e5e7eb";
+  } else {
+    fs.value = "08:00";
+    fe.value = "12:00";
+    fs.disabled = false;
+    fe.disabled = false;
+    fs.style.background = "var(--surf)";
+    fe.style.background = "var(--surf)";
+  }
+}
+
+// ==========================================
+// 5. ปรับฟังก์ชันบันทึกข้อมูลดึงข้อมูลขึ้นไปเก็บไว้บนคลาวด์ Firebase
+// ==========================================
+function saveItem() {
+  const name = document.getElementById('fn').value.trim() || document.getElementById('f-act').value.trim();
+  if(!name){toast('กรุณากรอกชื่อวิชาหรือกิจกรรม');return;}
+  
+  const dateVal=document.getElementById('fd').value;
+  const dates=[];
+  if(dateVal)dates.push(dateVal);
+  
+  const moreRaw=document.getElementById('fdm').value;
+  if(moreRaw){
+    moreRaw.split(',').forEach(s=>{
+      const p=s.trim();
+      if(/^\d{2}\/\d{2}\/\d{2}$/.test(p)){const[d,m,y]=p.split('/');dates.push(`20${y}-${m}-${d}`);}
+      else if(/^\d{4}-\d{2}-\d{2}$/.test(p))dates.push(p);
+    });
+  }
+
+  const newItem = {
+    id: nid++,
+    type: document.getElementById('ftype').value,
+    name: name,
+    code: document.getElementById('fc-code').value.trim(),
+    credit: document.getElementById('fcr').value.trim(),
+    dates: dates,
+    start: document.getElementById('fs').value,
+    end: document.getElementById('fe').value,
+    teacher: document.getElementById('ft').value.trim(),
+    phone: document.getElementById('fp').value.trim(),
+    note: document.getElementById('fnote').value.trim()
+  };
+
+  // ยิงก้อนข้อมูลขึ้นไปที่ Firebase ตรงๆ
+  db.ref('sched_vst269').push(newItem)
+    .then(() => {
+      // เมื่อเซฟเรียบร้อยให้ล้างข้อมูลในฟอร์มป้อนเข้า
+      ['fn','f-act','fc-code','fcr','fdm','ft','fp','fnote'].forEach(id=>document.getElementById(id).value='');
+      document.getElementById('fd').value='';
+      
+      // 📍 รีเซ็ตติ๊กทั้งวันให้กลับเป็นปกติ
+      const chkAllDay = document.getElementById('f-all-day');
+      chkAllDay.checked = false;
+      toggleAllDay(false);
+      
+      toast('บันทึกขึ้นระบบออนไลน์แล้ว');
+    })
+    .catch(e => toast('บันทึกล้มเหลว'));
+}
+
+function chMo(d){CM+=d;if(CM>11){CM=0;CY++;}if(CM<0){CM=11;CY--;}renderCal();}
+
+function goToday(){
+  const n=new Date();CY=n.getFullYear();CM=n.getMonth();
+  selDate=ds(n.getFullYear(),n.getMonth()+1,n.getDate());
+  show('cal',document.querySelectorAll('.tab')[0],0);renderCal();
+}
+
+function show(id,btn,idx){
+  document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));
+  document.querySelectorAll('.tab,.bnav-btn').forEach(b=>b.classList.remove('on'));
+  document.getElementById('scr-'+id).classList.add('on');
+  document.querySelectorAll('.tab')[idx].classList.add('on');
+  document.querySelectorAll('.bnav-btn')[idx].classList.add('on');
+  if(id==='list')renderList();
+  if(id==='add')renderManage();
+}
+
+function toast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2000);
+}
+
+const TEACHER_DATA = {
+  "อ.สมเจตน์ พันธ์รอด": { phone: "062-578-2656", code: "30000-1601", name: "การพัฒนาสุขภาพ", credit: "2-0-2", type: "class" },
+  "อ.จีรวรรณ จันทร์ศิริ": { phone: "082-697-5919", code: "30000-1501", name: "สังคมไทยในยุคดิจิทัล", credit: "1-2-2", type: "class" },
+  "อ.ศิริวรรณ แก้วอัญญกิจ": { phone: "082-404-5699", code: "30000-1201", name: "ภาษาอังกฤษสำหรับงานอาชีพ", credit: "1-2-2", type: "class" },
+  "อ.ฐินวัสน์ ฤทธิ์ดี": { phone: "086-374-3194", code: "30000-1401", name: "คณิตศาสตร์และสถิติเพื่องานอาชีพ", credit: "3-0-3", type: "class" },
+  "อ.สุชัญญา อ่อนศรี": { phone: "091-854-0239", code: "30001-1001", name: "การเป็นผู้ประกอบการ", credit: "2-2-3", type: "class" },
+  "อ.นิรมล สิทธิชัย": { phone: "089-639-9896", code: "30000-1101", name: "ทักษะภาษาไทยเพื่อการสื่อสารในงานอาชีพ", credit: "1-2-2", type: "class" },
+  "อ.นุชนารถ ช่างโคกสูง": { phone: "090-817-8040", code: "31700-1008", name: "จุลชีววิทยา", credit: "2-2-3", type: "class" },
+  "อ.ธีรพงศ์ สีหะวงษ์": { phone: "098-719-5428", code: "31703-2012", name: "การผลิตโคเนื้อ", credit: "2-3-3", type: "class" },
+  "อ.อภิสิทธิ์ ทองดี": { phone: "092-546-3238", code: "30000-2001", name: "กิจกรรมเสริมสร้างสุจริต จิตอาสา", credit: "0-2-0", type: "class" },
+  "อ.ศุภชัย สิริเมษสุธา": { phone: "062-254-2522", code: "31700-0003", name: "หลักการเลี้ยงสัตว์", credit: "0-2-0", type: "class" },
+  "อ.กันตภณ บุญกิจสุวรรณ": { phone: "061-795-9994", code: "31700-0016", name: "ปฏิบัติงานเกษตร", credit: "0-4-2", type: "class" }
+};
+
+function autoFillTeacher(tName) {
+  if (!tName || !TEACHER_DATA[tName]) {
+    document.getElementById('fp').value = '';
+    document.getElementById('fn').value = '';
+    document.getElementById('fc-code').value = '';
+    document.getElementById('fcr').value = '';
+    document.getElementById('ftype').value = 'class';
+    return;
+  }
+  
+  const info = TEACHER_DATA[tName];
+  document.getElementById('fp').value = info.phone;
+  document.getElementById('fn').value = info.name;
+  document.getElementById('fc-code').value = info.code;
+  document.getElementById('fcr').value = info.credit;
+  document.getElementById('ftype').value = info.type;
+  document.getElementById('f-act').value = '';
+}
+
+// เรียกให้ระบบคลาวด์ออนไลน์ทำงานตั้งแต่เริ่มหน้าจอ
+loadData();
+const n=new Date();CY=n.getFullYear();CM=n.getMonth();
+selDate=ds(n.getFullYear(),n.getMonth()+1,n.getDate());
+renderCal();
+</script>
+</body>
+</html>
