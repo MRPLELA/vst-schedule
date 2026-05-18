@@ -12,11 +12,12 @@
 <link href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-:root{
+:root {
   --green:#1B5E3B;--green-mid:#2D7A52;--green-light:#E8F5EE;--green-soft:#C8E6D4;
   --amber:#B45309;--amber-light:#FEF3C7;
   --red:#991B1B;--red-light:#FEE2E2;
-  --blue:#1E40AF;--blue-light:#DBEAFE;
+  --blue:#1E40AF;--blue-light:#DBEAFE;--blue-mid:#2563EB;
+  --purple:#5B21B6;--purple-light:#F3E8FF;--purple-mid:#7C3AED;
   --surf:#F9FAF8;--card:#FFFFFF;--border:#E2E8E4;
   --txt:#111814;--txt2:#4A5550;--txt3:#8A9690;
   --font:'Sarabun',sans-serif;
@@ -70,11 +71,15 @@ body{font-family:var(--font);background:var(--surf);color:var(--txt);font-size:1
 .dot{width:5px;height:5px;border-radius:50%}
 .dot.cls{background:var(--green-mid)}
 .dot.vrn{background:var(--amber)}
+.dot.act{background:var(--blue-mid)}
+.dot.exm{background:var(--purple-mid)}
 .day.sel .dot.cls{background:rgba(255,255,255,.85)}
 .day.sel .dot.vrn{background:#FCD34D}
+.day.sel .dot.act{background:#93C5FD}
+.day.sel .dot.exm{background:#C084FC}
 
 /* Legend */
-.legend{display:flex;gap:14px;align-items:center;padding:9px 14px;background:var(--card);border-bottom:1px solid var(--border);font-size:11px;color:var(--txt2);font-weight:500}
+.legend{display:flex;gap:10px;align-items:center;padding:9px 14px;background:var(--card);border-bottom:1px solid var(--border);font-size:11px;color:var(--txt2);font-weight:500;flex-wrap:wrap}
 .ldot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:4px}
 
 /* Day panel */
@@ -90,9 +95,11 @@ body{font-family:var(--font);background:var(--surf);color:var(--txt);font-size:1
 .ecard{border-radius:10px;border:1px solid var(--border);margin-bottom:8px;overflow:hidden}
 .ecard:last-child{margin-bottom:0}
 .ebar{padding:5px 12px;font-size:12px;font-weight:700;display:flex;align-items:center;gap:5px;flex-wrap:wrap}
-.ebar.am{background:var(--blue-light);color:var(--blue)}
+.ebar.am{background:var(--green-light);color:var(--green)}
 .ebar.pm{background:var(--amber-light);color:var(--amber)}
 .ebar.vr{background:var(--red-light);color:var(--red)}
+.ebar.ac{background:var(--blue-light);color:var(--blue)}
+.ebar.ex{background:var(--purple-light);color:var(--purple)}
 .ebody{padding:9px 12px;background:var(--card)}
 .ename{font-size:14px;font-weight:700;color:var(--txt);margin-bottom:3px;line-height:1.35}
 .ecode{font-size:11px;color:var(--txt3);margin-bottom:6px}
@@ -104,12 +111,14 @@ body{font-family:var(--font);background:var(--surf);color:var(--txt);font-size:1
 .badge{font-size:10px;padding:1px 7px;border-radius:5px;font-weight:700;vertical-align:middle}
 .b-adj{background:#FEE2D5;color:#C84B11}
 .b-vr{background:var(--red-light);color:var(--red)}
+.b-ac{background:var(--blue-light);color:var(--blue)}
+.b-ex{background:var(--purple-light);color:var(--purple)}
 
 /* List */
 .list-wrap{padding:12px 14px}
 .lg-hdr{font-size:11px;font-weight:700;color:var(--txt3);letter-spacing:.06em;margin-bottom:8px;display:flex;align-items:center;gap:8px}
 .lg-hdr::after{content:'';flex:1;height:1px;background:var(--border)}
-.lg{margin-bottom:18px}
+.lg
 
 /* Add screen */
 .add-wrap{padding:14px}
@@ -131,7 +140,6 @@ body{font-family:var(--font);background:var(--surf);color:var(--txt);font-size:1
 .del-btn{background:none;border:none;color:var(--txt3);font-size:18px;cursor:pointer;padding:6px;display:flex;align-items:center}
 .del-btn:active{color:var(--red)}
 
-/* สไตล์เฉพาะสำหรับตัวเลือกติ๊กทั้งวัน */
 .chk-row{display:flex;align-items:center;gap:8px;margin-bottom:11px;user-select:none;cursor:pointer}
 .chk-row input[type="checkbox"]{-webkit-appearance:checkbox;appearance:checkbox;width:16px;height:16px;accent-color:var(--green);cursor:pointer}
 .chk-row label{font-size:13px;font-weight:600;color:var(--txt2);cursor:pointer}
@@ -149,7 +157,6 @@ body{font-family:var(--font);background:var(--surf);color:var(--txt);font-size:1
 
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
-
 </head>
 <body>
 <div class="shell">
@@ -189,8 +196,10 @@ body{font-family:var(--font);background:var(--surf);color:var(--txt);font-size:1
       <div class="cal-grid" id="cal-grid"></div>
     </div>
     <div class="legend">
-      <span><span class="ldot" style="background:#2D7A52"></span>วันและวิชาที่เรียน</span>
+      <span><span class="ldot" style="background:#2D7A52"></span>วิชาเรียน</span>
       <span><span class="ldot" style="background:#B45309"></span>วันส่งงาน</span>
+      <span><span class="ldot" style="background:#2563EB"></span>กิจกรรม</span>
+      <span><span class="ldot" style="background:#7C3AED"></span>วันสอบ</span>
     </div>
     <div class="day-panel" id="day-panel" style="display:none">
       <div class="dp-hdr">
@@ -208,51 +217,62 @@ body{font-family:var(--font);background:var(--surf);color:var(--txt);font-size:1
   <div id="scr-add" class="scr">
     <div class="add-wrap">
       <div class="fc">
-        <div class="fc-ttl"><i class="ti ti-plus-circle" aria-hidden="true"></i>เพิ่มรายวิชา / กิจกรรม / กำหนดส่งงาน</div>
+        <div class="fc-ttl"><i class="ti ti-plus-circle" aria-hidden="true"></i>เพิ่มรายวิชา / กำหนดส่งงาน / กิจกรรม / วันสอบ</div>
         
-        <div class="fr2">
-          <div class="fr"><label>ผู้สอน</label>
-            <select id="ft" onchange="autoFillTeacher(this.value)">
-              <option value="">-- เลือกผู้สอน --</option>
-              <option value="อ.สมเจตน์ พันธ์รอด">อ.สมเจตน์ พันธ์รอด</option>
-              <option value="อ.จีรวรรณ จันทร์ศิริ">อ.จีรวรรณ จันทร์ศิริ</option>
-              <option value="อ.ศิริวรรณ แก้วอัญญกิจ">อ.ศิริวรรณ แก้วอัญญกิจ</option>
-              <option value="อ.ฐินวัสน์ ฤทธิ์ดี">อ.ฐินวัสน์ ฤทธิ์ดี</option>
-              <option value="อ.สุชัญญา อ่อนศรี">อ.สุชัญญา อ่อนศรี</option>
-              <option value="อ.นิรมล สิทธิชัย">อ.นิรมล สิทธิชัย</option>
-              <option value="อ.นุชนารถ ช่างโคกสูง">อ.นุชนารถ ช่างโคกสูง</option>
-              <option value="อ.ธีรพงศ์ สีหะวงษ์">อ.ธีรพงศ์ สีหะวงษ์</option>
-              <option value="อ.อภิสิทธิ์ ทองดี">อ.อภิสิทธิ์ ทองดี</option>
-              <option value="อ.ศุภชัย สิริเมษสุธา">อ.ศุภชัย สิริเมษสุธา</option>
-              <option value="อ.กันตภณ บุญกิจสุวรรณ">อ.กันตภณ บุญกิจสุวรรณ</option>
-            </select>
+        <div class="fr"><label>ประเภทรายการ</label>
+          <select id="ftype" onchange="handleTypeChange(this.value)">
+            <option value="class">📚 วิชาเรียน (ดึงข้อมูลผู้สอนอัตโนมัติ)</option>
+            <option value="vern">📝 วันส่งงาน (ดึงข้อมูลผู้สอนอัตโนมัติ)</option>
+            <option value="activity">🎉 กิจกรรม / อื่นๆ (ดึงข้อมูลผู้สอนอัตโนมัติ)</option>
+            <option value="exam">✏️ กำหนดวันสอบ (ดึงข้อมูลผู้สอนอัตโนมัติ)</option>
+          </select>
+        </div>
+
+        <div id="teacher-block">
+          <div class="fr2">
+            <div class="fr"><label>ผู้สอน</label>
+              <select id="ft" onchange="autoFillTeacher(this.value)">
+                <option value="">-- เลือกผู้สอน --</option>
+                <option value="อ.สมเจตน์ พันธ์รอด">อ.สมเจตน์ พันธ์รอด</option>
+                <option value="อ.จีรวรรณ จันทร์ศิริ">อ.จีรวรรณ จันทร์ศิริ</option>
+                <option value="อ.ศิริวรรณ แก้วอัญญกิจ">อ.ศิริวรรณ แก้วอัญญกิจ</option>
+                <option value="อ.ฐินวัสน์ ฤทธิ์ดี">อ.ฐินวัสน์ ฤทธิ์ดี</option>
+                <option value="อ.สุชัญญา อ่อนศรี">อ.สุชัญญา อ่อนศรี</option>
+                <option value="อ.นิรมล สิทธิชัย">อ.นิรมล สิทธิชัย</option>
+                <option value="อ.นุชนารถ ช่างโคกสูง">อ.นุชนารถ ช่างโคกสูง</option>
+                <option value="อ.ธีรพงศ์ สีหะวงษ์">อ.ธีรพงศ์ สีหะวงษ์</option>
+                <option value="อ.อภิสิทธิ์ ทองดี">อ.อภิสิทธิ์ ทองดี</option>
+                <option value="อ.ศุภชัย สิริเมษสุธา">อ.ศุภชัย สิริเมษสุธา</option>
+                <option value="อ.กันตภณ บุญกิจสุวรรณ">อ.กันตภณ บุญกิจสุวรรณ</option>
+              </select>
+            </div>
+            <div class="fr"><label>เบอร์โทร</label><input type="text" id="fp" placeholder="เลือกผู้สอนก่อน" readonly style="background: #f0f0f0; color: #666;"></div>
+          </div>  
+
+          <div class="fr">
+            <label>ชื่อรายวิชา</label>
+            <input type="text" id="fn" placeholder="เลือกผู้สอนเพื่อดึงชื่อวิชาอัตโนมัติ" readonly style="background: #f0f0f0; color: #666;">
           </div>
-          <div class="fr"><label>เบอร์โทร</label><input type="text" id="fp" placeholder="กรุณาเลือกผู้สอนก่อน" readonly style="background: #f0f0f0; color: #666;"></div>
-        </div>  
 
-        <div class="fr">
-          <label>ชื่อรายวิชา</label>
-          <input type="text" id="fn" placeholder="กรุณาเลือกผู้สอนเพื่อดึงชื่อวิชาอัตโนมัติ" readonly style="background: #f0f0f0; color: #666;">
-        </div>
-
-        <div class="fr2">
-          <div class="fr"><label>รหัสวิชา</label><input type="text" id="fc-code" placeholder="เลือกผู้สอน" readonly style="background: #f0f0f0; color: #666;"></div>
-          <div class="fr"><label>หน่วยกิต</label><input type="text" id="fcr" placeholder="เลือกผู้สอน" readonly style="background: #f0f0f0; color: #666;"></div>
+          <div class="fr2">
+            <div class="fr"><label>รหัสวิชา</label><input type="text" id="fc-code" placeholder="เลือกผู้สอน" readonly style="background: #f0f0f0; color: #666;"></div>
+            <div class="fr"><label>หน่วยกิต</label><input type="text" id="fcr" placeholder="เลือกผู้สอน" readonly style="background: #f0f0f0; color: #666;"></div>
+          </div>
         </div>
 
         <div class="fr">
-          <label>ชื่อกิจกรรม / อื่นๆ (พิมพ์เองอิสระ)</label>
-          <input type="text" id="f-act" placeholder="เช่น ประชุมกลุ่ม, กำหนดส่งงาน, กิจกรรมสถาบัน">
+          <label id="act-label">รายละเอียดเพิ่มเติม (ระบุได้)</label>
+          <input type="text" id="f-act" placeholder="เช่น เรียนชดเชย, สอบท้ายบท">
         </div>
         
         <div class="fr2">
           <div class="fr"><label>วันที่ (หลัก)</label><input type="date" id="fd"></div>
-          <div class="fr"><label>วันเพิ่มเติม (คั่น ,)</label><input type="text" id="fdm" placeholder="17/05/69, 24/05/69"></div>
+          <div class="fr"><label>วันเพิ่มเติม (คั่นด้วย ,)</label><input type="text" id="fdm" placeholder="17/05/69, 24/05/69"></div>
         </div>
         
         <div class="chk-row">
           <input type="checkbox" id="f-all-day" onchange="toggleAllDay(this.checked)">
-          <label for="f-all-day">ทั้งวัน (หากกำหนดส่งงานให้เลือก)</label>
+          <label for="f-all-day">ทั้งวัน (ให้เลือกหากกำหนด ส่งงาน / กิจกรรม / วันสอบ)</label>
         </div>
 
         <div class="fr2">
@@ -260,18 +280,11 @@ body{font-family:var(--font);background:var(--surf);color:var(--txt);font-size:1
           <div class="fr"><label>เวลาสิ้นสุด</label><input type="time" id="fe" value="12:00"></div>
         </div>
         
-          <div class="fr"><label>ประเภท (เลือกเป็นวิชาเรียน/ส่งงาน/อื่นๆ)</label>
-            <select id="ftype">
-              <option value="class">วิชาเรียน</option>
-              <option value="vern">วันส่งงาน</option>
-              <option value="other">อื่นๆ</option>
-            </select>
-          </div>
-        <div class="fr"><label>หมายเหตุ</label><textarea id="fnote" placeholder="เช่น ปรับพื้นฐาน, สถานที่..."></textarea></div>
-        <button class="btn-save" onclick="saveItem()">บันทึก</button>
+        <div class="fr"><label>หมายเหตุ</label><textarea id="fnote" placeholder="เช่น สถานที่, ห้องเรียน, สิ่งที่ต้องเตรียม..."></textarea></div>
+        <button class="btn-save" onclick="saveItem()">บันทึกข้อมูล</button>
       </div>
       <div class="fc">
-        <div class="fc-ttl"><i class="ti ti-list-details" aria-hidden="true"></i>รายการทั้งหมด (<span id="item-count">0</span>)</div>
+        <div class="fc-ttl"><i class="ti ti-list-details" aria-hidden="true"></i>รายการข้อมูล (<span id="item-count">0</span>)</div>
         <div id="manage-list"></div>
       </div>
     </div>
@@ -282,7 +295,7 @@ body{font-family:var(--font);background:var(--surf);color:var(--txt);font-size:1
 <div class="bnav">
   <button class="bnav-btn on" onclick="show('cal',this,0)"><i class="ti ti-calendar-month"></i>ปฏิทิน</button>
   <button class="bnav-btn" onclick="show('list',this,1)"><i class="ti ti-list-details"></i>รายการ</button>
-  <button class="bnav-btn" onclick="show('add',this,2)"><i class="ti ti-circle-plus"></i>เพิ่ม</button>
+  <button class="bnav-btn" onclick="show('add',this,2)"><i class="ti ti-circle-plus"></i>เพิ่มข้อมูล</button>
 </div>
 </div>
 
@@ -307,9 +320,6 @@ const INIT=[
   {id:12,type:'class',name:'ปฏิบัติงานเกษตร',code:'31700-0016',credit:'0-4-2',dates:['2026-09-05','2026-09-06','2026-09-12','2026-09-13'],start:'13:00',end:'17:00',teacher:'อ.กันตภณ บุญกิจสุวรรณ',phone:'061-795-9994',note:'ปรับพื้นฐาน'},
 ];
 
-// ==========================================
-// 2. ฝังคีย์เซิร์ฟเวอร์ฐานข้อมูลโปรเจกต์ของคุณณัฐ
-// ==========================================
 const firebaseConfig = {
   apiKey: "AIzaSyB8baqTRGzRuwytClxrj3M4gbf8ayU6cig",
   authDomain: "vst-schedule.firebaseapp.com",
@@ -321,49 +331,39 @@ const firebaseConfig = {
   measurementId: "G-5RTYSJBLD9"
 };
 
-// สั่งเปิดระบบคลาวด์ Firebase หลังบ้าน
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
 let items = [], nid = 1, CY, CM, selDate=null;
 
-// ==========================================
-// 3. ปรับฟังก์ชันดึงข้อมูลให้ดึงแบบ Realtime จาก Firebase แทนที่ LocalStorage
-// ==========================================
 function loadData(){
   db.ref('sched_vst269').on('value', (snapshot) => {
     const data = snapshot.val();
     if(data){
-      // แปลง Object โครงสร้างคลาวด์มาเป็นรูปแบบ Array บอร์ดหน้าบ้าน
       items = Object.keys(data).map(key => ({
-        dbKey: key, // ผูกรหัส Key พิเศษเอาไว้เผื่อสำหรับสั่งลบ
+        dbKey: key,
         ...data[key]
       }));
     } else {
-      // หากเข้าใช้งานระบบครั้งแรกและฐานข้อมูลยังโล่งอยู่ ให้ดันข้อมูลคงที่ INIT ตั้งต้นสวมเข้าไปทันที
       items = JSON.parse(JSON.stringify(INIT));
       items.forEach(item => {
         db.ref('sched_vst269').push(item);
       });
     }
-    // หาเลข ID สูงสุดมาบวกหนึ่งป้องกันรหัสซ้ำ
     nid = items.length ? Math.max(...items.map(x => x.id || 0)) + 1 : 1;
     
-    // สั่งรีเฟรชอัปเดตหน้าจอแชร์ร่วมกันสดๆ ทันที
     renderCal();
     if(document.getElementById('scr-list').classList.contains('on')) renderList();
     if(document.getElementById('scr-add').classList.contains('on')) renderManage();
   });
 }
 
-function saveData(){
-  // ยกเลิกฟังก์ชันนี้เนื่องจากระบบเปลี่ยนสไตล์ไปคุยยิงพุ่งตรงขึ้นคลาวด์ Firebase แล้ว
-}
-
 function ds(y,m,d){return y+'-'+(m<10?'0'+m:m)+'-'+(d<10?'0'+d:d)}
 function evtsFor(dateStr){return items.filter(x=>(x.dates||[]).includes(dateStr)).sort((a,b)=>a.start.localeCompare(b.start))}
 function clsDates(){const s=new Set();items.filter(x=>x.type==='class').forEach(x=>(x.dates||[]).forEach(d=>s.add(d)));return s}
 function vrnDates(){const s=new Set();items.filter(x=>x.type==='vern').forEach(x=>(x.dates||[]).forEach(d=>s.add(d)));return s}
+function actDates(){const s=new Set();items.filter(x=>x.type==='activity').forEach(x=>(x.dates||[]).forEach(d=>s.add(d)));return s}
+function exmDates(){const s=new Set();items.filter(x=>x.type==='exam').forEach(x=>(x.dates||[]).forEach(d=>s.add(d)));return s}
 function allDates(){const s=new Set();items.forEach(x=>(x.dates||[]).forEach(d=>s.add(d)));return s}
 
 function renderCal(){
@@ -375,13 +375,13 @@ function renderCal(){
   const prev=new Date(CY,CM,0).getDate();
   const n=new Date();
   const tod=ds(n.getFullYear(),n.getMonth()+1,n.getDate());
-  const CS=clsDates(), VS=vrnDates();
+  const CS=clsDates(), VS=vrnDates(), AS=actDates(), ES=exmDates();
 
   function cell(d,dateStr,extra){
     const el=document.createElement('div');
     el.className='day '+extra;
-    const hc=CS.has(dateStr), hv=VS.has(dateStr);
-    el.innerHTML=`<span class="dn">${d}</span><div class="dot-row">${hc?'<div class="dot cls"></div>':''}${hv?'<div class="dot vrn"></div>':''}</div>`;
+    const hc=CS.has(dateStr), hv=VS.has(dateStr), ha=AS.has(dateStr), he=ES.has(dateStr);
+    el.innerHTML=`<span class="dn">${d}</span><div class="dot-row">${hc?'<div class="dot cls"></div>':''}${hv?'<div class="dot vrn"></div>':''}${ha?'<div class="dot act"></div>':''}${he?'<div class="dot exm"></div>':''}</div>`;
     return el;
   }
 
@@ -409,12 +409,16 @@ function pickDay(dateStr){selDate=dateStr;renderCal();renderPanel(dateStr);}
 
 function eCard(ev){
   const isV=ev.type==='vern';
-  const barCls=isV?'vr':(parseInt(ev.start)<12?'am':'pm');
+  const isA=ev.type==='activity';
+  const isE=ev.type==='exam';
+  const barCls=isV?'vr':(isA?'ac':(isE?'ex':(parseInt(ev.start)<12?'am':'pm')));
   const isAdj=ev.note&&ev.note.includes('ปรับพื้นฐาน');
   return `<div class="ecard">
     <div class="ebar ${barCls}">
       <i class="ti ti-clock" style="font-size:13px" aria-hidden="true"></i>${ev.start} – ${ev.end} น.
       ${isV?`<span class="badge b-vr">${ev.note||'วันส่งงาน'}</span>`:''}
+      ${isA?`<span class="badge b-ac">กิจกรรม</span>`:''}
+      ${isE?`<span class="badge b-ex" style="background:var(--purple); color:#fff;">📋 กำหนดวันสอบ</span>`:''}
       ${isAdj?'<span class="badge b-adj">ปรับพื้นฐาน</span>':''}
     </div>
     <div class="ebody">
@@ -460,15 +464,12 @@ function renderManage(){
     <div class="mr">
       <div>
         <div class="mr-name">${x.name}</div>
-        <div class="mr-meta">${x.type==='vern'?'วันส่งงาน':'วิชา'} • ${(x.dates||[]).length} วัน</div>
+        <div class="mr-meta">${x.type==='vern'?'วันส่งงาน':(x.type==='activity'?'กิจกรรม':(x.type==='exam'?'วันสอบ':'วิชา'))} • ${(x.dates||[]).length} วัน</div>
       </div>
       <button class="del-btn" onclick="delItem('${x.id}', '${x.dbKey || ""}')" aria-label="ลบ ${x.name}"><i class="ti ti-trash" aria-hidden="true"></i></button>
     </div>`).join(''):'<div style="color:var(--txt3);font-size:13px;text-align:center;padding:12px">ยังไม่มีรายการ</div>';
 }
 
-// ==========================================
-// 4. แก้ไขปุ่มลบให้ลบก้อนบนเซิร์ฟเวอร์ Firebase ออนไลน์ร่วมกัน
-// ==========================================
 function delItem(id, dbKey){
   if(!confirm('ลบรายการนี้ร่วมกันสำหรับทุกคนบนออนไลน์?')) return;
   if(dbKey) {
@@ -485,7 +486,6 @@ function delItem(id, dbKey){
   }
 }
 
-// 📍 ฟังก์ชันคุมการติ๊ก ทั้งวัน (คงโครงสร้างเดิมจาก indexGemi)
 function toggleAllDay(isAllDay) {
   const fs = document.getElementById('fs');
   const fe = document.getElementById('fe');
@@ -506,12 +506,36 @@ function toggleAllDay(isAllDay) {
   }
 }
 
-// ==========================================
-// 5. ปรับฟังก์ชันบันทึกข้อมูลดึงข้อมูลขึ้นไปเก็บไว้บนคลาวด์ Firebase
-// ==========================================
+function handleTypeChange(val) {
+  const actLabel = document.getElementById('act-label');
+  const fAct = document.getElementById('f-act');
+  
+  document.getElementById('ft').value = '';
+  document.getElementById('fp').value = '';
+  document.getElementById('fn').value = '';
+  document.getElementById('fc-code').value = '';
+  document.getElementById('fcr').value = '';
+  fAct.value = '';
+
+  if (val === 'class') {
+    actLabel.textContent = "รายละเอียดเพิ่มเติม (ระบุได้)";
+    fAct.placeholder = "เช่น เรียนชดเชย, สอบท้ายบท";
+  } else if (val === 'vern') {
+    actLabel.textContent = "รายละเอียดงานที่ต้องส่งเพิ่มเติม (ระบุได้)";
+    fAct.placeholder = "เช่น ส่งรายงานโคเนื้อ, ส่งเล่มบันทึกกิจกรรม";
+  } else if (val === 'activity') {
+    actLabel.textContent = "ชื่อกิจกรรม / อื่นๆ (ระบุได้)";
+    fAct.placeholder = "เช่น กิจกรรมปฐมนิเทศ, กิจกรรมเข้าค่าย, เรียนชดเชย";
+  } else if (val === 'exam') {
+    actLabel.textContent = "รายละเอียดการสอบเพิ่มเติม (ระบุได้)";
+    fAct.placeholder = "เช่น สอบกลางภาค บทที่ 1-3, สอบเก็บคะแนนปฏิบัติ";
+  }
+}
+
 function saveItem() {
+  const type = document.getElementById('ftype').value;
   const name = document.getElementById('fn').value.trim() || document.getElementById('f-act').value.trim();
-  if(!name){toast('กรุณากรอกชื่อวิชาหรือกิจกรรม');return;}
+  if(!name){toast('กรุณากรอกชื่อวิชาหรือรายละเอียดกิจกรรม');return;}
   
   const dateVal=document.getElementById('fd').value;
   const dates=[];
@@ -528,7 +552,7 @@ function saveItem() {
 
   const newItem = {
     id: nid++,
-    type: document.getElementById('ftype').value,
+    type: type,
     name: name,
     code: document.getElementById('fc-code').value.trim(),
     credit: document.getElementById('fcr').value.trim(),
@@ -540,14 +564,11 @@ function saveItem() {
     note: document.getElementById('fnote').value.trim()
   };
 
-  // ยิงก้อนข้อมูลขึ้นไปที่ Firebase ตรงๆ
   db.ref('sched_vst269').push(newItem)
     .then(() => {
-      // เมื่อเซฟเรียบร้อยให้ล้างข้อมูลในฟอร์มป้อนเข้า
       ['fn','f-act','fc-code','fcr','fdm','ft','fp','fnote'].forEach(id=>document.getElementById(id).value='');
       document.getElementById('fd').value='';
       
-      // 📍 รีเซ็ตติ๊กทั้งวันให้กลับเป็นปกติ
       const chkAllDay = document.getElementById('f-all-day');
       chkAllDay.checked = false;
       toggleAllDay(false);
@@ -601,7 +622,6 @@ function autoFillTeacher(tName) {
     document.getElementById('fn').value = '';
     document.getElementById('fc-code').value = '';
     document.getElementById('fcr').value = '';
-    document.getElementById('ftype').value = 'class';
     return;
   }
   
@@ -610,11 +630,9 @@ function autoFillTeacher(tName) {
   document.getElementById('fn').value = info.name;
   document.getElementById('fc-code').value = info.code;
   document.getElementById('fcr').value = info.credit;
-  document.getElementById('ftype').value = info.type;
   document.getElementById('f-act').value = '';
 }
 
-// เรียกให้ระบบคลาวด์ออนไลน์ทำงานตั้งแต่เริ่มหน้าจอ
 loadData();
 const n=new Date();CY=n.getFullYear();CM=n.getMonth();
 selDate=ds(n.getFullYear(),n.getMonth()+1,n.getDate());
