@@ -93,8 +93,8 @@
                 <option value="">-- เลือกผู้สอน --</option>
                 <option value="อ.สมเจตน์ พันธ์รอด">อ.สมเจตน์ พันธ์รอด</option>
                 <option value="อ.จีรวรรณ จันทร์ศิริ">อ.จีรวรรณ จันทร์ศิริ</option>
-                <option value="อ.ศิริวรรณ แก้วอัญญกิจ">อ.ศิริวรรณ แก้วอัญญกิจ</option>
-                <option value="อ.ฐินวัสน์ ฤทธิ์ดี">อ.ฐินวัสน์ ฤทธิ์ดี</option>
+                <option value="อ.ศิริวรรณ แก่นอัญกิจ">อ.ศิริวรรณ แก่นอัญกิจ</option>
+                <option value="อ.ศิโนรัตน์ ฤกษ์ดี">อ.ศิโนรัตน์ ฤกษ์ดี</option>
                 <option value="อ.สุชัญญา อ่อนศรี">อ.สุชัญญา อ่อนศรี</option>
                 <option value="อ.นิรมล สิทธิชัย">อ.นิรมล สิทธิชัย</option>
                 <option value="อ.นุชนารถ ช่างโคกสูง">อ.นุชนารถ ช่างโคกสูง</option>
@@ -109,7 +109,9 @@
 
           <div class="fr">
             <label>ชื่อรายวิชา</label>
-            <input type="text" id="fn" placeholder="เลือกผู้สอนเพื่อดึงชื่อวิชาอัตโนมัติ" readonly style="background: #f0f0f0; color: #666;">
+            <select id="fn" onchange="fillSubjDetails()" disabled style="background: #f0f0f0; color: #666;">
+              <option value="">เลือกผู้สอนเพื่อดึงชื่อวิชาอัตโนมัติ</option>
+            </select>
           </div>
 
           <div class="fr2">
@@ -177,8 +179,8 @@ const TD=['อาทิตย์','จันทร์','อังคาร','พ
 const INIT=[
   {id:1,type:'class',name:'การพัฒนาสุขภาพ 🏃‍♂️',code:'30000-1601',credit:'2-0-2',dates:['2026-05-17','2026-05-24','2026-05-31','2026-06-07'],start:'08:00',end:'12:00',teacher:'อ.สมเจตน์ พันธ์รอด',phone:'062-578-2656',note:'',createdAt:'17/05/2569 - 09:00 น.'},
   {id:2,type:'class',name:'สังคมไทยในยุคดิจิทัล 📱',code:'30000-1501',credit:'1-2-2',dates:['2026-05-17','2026-05-24','2026-05-31','2026-06-07'],start:'13:00',end:'17:00',teacher:'อ.จีรวรรณ จันทร์ศิริ',phone:'082-697-5919',note:'',createdAt:'17/05/2569 - 09:00 น.'},
-  {id:3,type:'class',name:'ภาษาอังกฤษสำหรับงานอาชีพ 🇬🇧',code:'30000-1201',credit:'1-2-2',dates:['2026-06-14','2026-06-21','2026-06-28','2026-07-05'],start:'08:00',end:'12:00',teacher:'อ.ศิริวรรณ แก้วอัญญกิจ',phone:'082-404-5699',note:'',createdAt:'17/05/2569 - 09:00 น.'},
-  {id:4,type:'class',name:'คณิตศาสตร์และสถิติเพื่องานอาชีพ 📊',code:'30000-1401',credit:'3-0-3',dates:['2026-06-14','2026-06-21','2026-06-28','2026-07-05'],start:'13:00',end:'17:00',teacher:'อ.ฐินวัสน์ ฤทธิ์ดี',phone:'086-374-3194',note:'',createdAt:'17/05/2569 - 09:00 น.'},
+  {id:3,type:'class',name:'ภาษาอังกฤษสำหรับงานอาชีพ 🇬🇧',code:'30000-1201',credit:'1-2-2',dates:['2026-06-14','2026-06-21','2026-06-28','2026-07-05'],start:'08:00',end:'12:00',teacher:'อ.ศิริวรรณ แก่นอัญกิจ',phone:'082-404-5699',note:'',createdAt:'17/05/2569 - 09:00 น.'},
+  {id:4,type:'class',name:'คณิตศาสตร์และสถิติเพื่องานอาชีพ 📊',code:'30000-1401',credit:'3-0-3',dates:['2026-06-14','2026-06-21','2026-06-28','2026-07-05'],start:'13:00',end:'17:00',teacher:'อ.ศิโนรัตน์ ฤกษ์ดี',phone:'086-374-3194',note:'',createdAt:'17/05/2569 - 09:00 น.'},
   {id:5,type:'class',name:'การเป็นผู้ประกอบการ 💼',code:'30001-1001',credit:'2-2-3',dates:['2026-07-12','2026-07-19','2026-07-26','2026-08-02'],start:'08:00',end:'12:00',teacher:'อ.สุชัญญา อ่อนศรี',phone:'091-854-0239',note:'',createdAt:'17/05/2569 - 09:00 น.'},
   {id:6,type:'class',name:'ทักษะภาษาไทยเพื่อการสื่อสารในงานอาชีพ 🇹🇭',code:'30000-1101',credit:'1-2-2',dates:['2026-07-12','2026-07-19','2026-07-26','2026-08-02'],start:'13:00',end:'17:00',teacher:'อ.นิรมล สิทธิชัย',phone:'089-639-9896',note:'',createdAt:'17/05/2569 - 09:00 น.'},
   {id:7,type:'class',name:'จุลชีววิทยา 🔬',code:'31700-1008',credit:'2-2-3',dates:['2026-08-08','2026-08-09','2026-08-15','2026-08-16'],start:'08:00',end:'12:00',teacher:'อ.นุชนารถ ช่างโคกสูง',phone:'090-817-8040',note:'',createdAt:'17/05/2569 - 09:00 น.'},
@@ -521,15 +523,14 @@ function editItem(id) {
     document.getElementById('f-act').value = target.name || '';
   } else {
     document.getElementById('ft').value = target.teacher || '';
+    autoFillTeacher(target.teacher);
     document.getElementById('fp').value = target.phone || '';
-    document.getElementById('fc-code').value = target.code || '';
-    document.getElementById('fcr').value = target.credit || '';
     
     if (target.teacher) {
       document.getElementById('fn').value = target.name || '';
+      fillSubjDetails();
       document.getElementById('f-act').value = target.note || '';
     } else {
-      document.getElementById('fn').value = '';
       document.getElementById('f-act').value = target.name || '';
     }
   }
@@ -596,10 +597,13 @@ function handleTypeChange(val) {
   const actLabel = document.getElementById('act-label');
   const fAct = document.getElementById('f-act');
   const teacherBlock = document.getElementById('teacher-block');
+  const fn = document.getElementById('fn');
   
   document.getElementById('ft').value = '';
   document.getElementById('fp').value = '';
-  document.getElementById('fn').value = '';
+  fn.innerHTML = '<option value="">เลือกผู้สอนเพื่อดึงชื่อวิชาอัตโนมัติ</option>';
+  fn.disabled = true;
+  fn.style.background = '#f0f0f0'; fn.style.color = '#666';
   document.getElementById('fc-code').value = '';
   document.getElementById('fcr').value = '';
   fAct.value = '';
@@ -703,7 +707,12 @@ function resetFormState() {
   document.getElementById('btn-cancel').style.display = "none";
   document.getElementById('edit-dbkey').value = '';
 
-  ['fn','f-act','fc-code','fcr','fdm','ft','fp','fnote'].forEach(id=>document.getElementById(id).value='');
+  const fn = document.getElementById('fn');
+  fn.innerHTML = '<option value="">เลือกผู้สอนเพื่อดึงชื่อวิชาอัตโนมัติ</option>';
+  fn.disabled = true;
+  fn.style.background = '#f0f0f0'; fn.style.color = '#666';
+
+  ['f-act','fc-code','fcr','fdm','ft','fp','fnote'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('fd').value='';
   document.getElementById('f-all-day').checked = false;
   toggleAllDay(false);
@@ -734,31 +743,64 @@ function toast(msg){
 }
 
 const TEACHER_DATA = {
-  "อ.สมเจตน์ พันธ์รอด": { phone: "062-578-2656", code: "30000-1601", name: "การพัฒนาสุขภาพ 🏃‍♂️", credit: "2-0-2" },
-  "อ.จีรวรรณ จันทร์ศิริ": { phone: "082-697-5919", code: "30000-1501", name: "สังคมไทยในยุคดิจิทัล 📱", credit: "1-2-2" },
-  "อ.ศิริวรรณ แก้วอัญญกิจ": { phone: "082-404-5699", code: "30000-1201", name: "ภาษาอังกฤษสำหรับงานอาชีพ 🇬🇧", credit: "1-2-2" },
-  "อ.ฐินวัสน์ ฤทธิ์ดี": { phone: "086-374-3194", code: "30000-1401", name: "คณิตศาสตร์และสถิติเพื่องานอาชีพ 📊", credit: "3-0-3" },
-  "อ.สุชัญญา อ่อนศรี": { phone: "091-854-0239", code: "30001-1001", name: "การเป็นผู้ประกอบการ 💼", credit: "2-2-3" },
-  "อ.นิรมล สิทธิชัย": { phone: "089-639-9896", code: "30000-1101", name: "ทักษะภาษาไทยเพื่อการสื่อสารในงานอาชีพ 🇹🇭", credit: "1-2-2" },
-  "อ.นุชนารถ ช่างโคกสูง": { phone: "090-817-8040", code: "31700-1008", name: "จุลชีววิทยา 🔬", credit: "2-2-3" },
-  "อ.ธีรพงศ์ สีหะวงษ์": { phone: "098-719-5428", code: "31703-2012", name: "การผลิตโคเนื้อ 🐄", credit: "2-3-3" },
-  "อ.อภิสิทธิ์ ทองดี": { phone: "092-546-3238", code: "30000-2001", name: "กิจกรรมเสริมสร้างสุจริต จิตอาสา 🤝", credit: "0-2-0" },
-  "อ.ศุภชัย สิริเมษสุธา": { phone: "062-254-2522", code: "31700-0003", name: "หลักการเลี้ยงสัตว์ 🐥", credit: "0-2-0" },
-  "อ.กันตภณ บุญกิจสุวรรณ": { phone: "061-795-9994", code: "31700-0016", name: "ปฏิบัติงานเกษตร 🚜", credit: "0-4-2" }
+  "อ.สมเจตน์ พันธ์รอด": { 
+    phone: "062-578-2656", 
+    subjects: [
+      { code: "30000-1601", name: "การพัฒนาสุขภาพ 🏃‍♂️", credit: "2-0-2" },
+      { code: "31700-0010", name: "อาชีวอนามัยและความปลอดภัย ⚠️", credit: "2-0-2" }
+    ] 
+  },
+  "อ.จีรวรรณ จันทร์ศิริ": { phone: "082-697-5919", subjects: [{ code: "30000-1501", name: "สังคมไทยในยุคดิจิทัล 📱", credit: "1-2-2" }] },
+  "อ.ศิริวรรณ แก่นอัญกิจ": { phone: "082-404-5699", subjects: [{ code: "30000-1201", name: "ภาษาอังกฤษสำหรับงานอาชีพ 🇬🇧", credit: "1-2-2" }] },
+  "อ.ศิโนรัตน์ ฤกษ์ดี": { phone: "086-374-3194", subjects: [{ code: "30000-1401", name: "คณิตศาสตร์และสถิติเพื่องานอาชีพ 📊", credit: "3-0-3" }] },
+  "อ.สุชัญญา อ่อนศรี": { phone: "091-854-0239", subjects: [{ code: "30001-1001", name: "การเป็นผู้ประกอบการ 💼", credit: "2-2-3" }] },
+  "อ.นิรมล สิทธิชัย": { phone: "089-639-9896", subjects: [{ code: "30000-1101", name: "ทักษะภาษาไทยเพื่อการสื่อสารในงานอาชีพ 🇹🇭", credit: "1-2-2" }] },
+  "อ.นุชนารถ ช่างโคกสูง": { phone: "090-817-8040", subjects: [{ code: "31700-1008", name: "จุลชีววิทยา 🔬", credit: "2-2-3" }] },
+  "อ.ธีรพงศ์ สีหะวงษ์": { phone: "098-719-5428", subjects: [{ code: "31703-2012", name: "การผลิตโคเนื้อ 🐄", credit: "2-3-3" }] },
+  "อ.อภิสิทธิ์ ทองดี": { phone: "092-546-3238", subjects: [{ code: "30000-2001", name: "กิจกรรมเสริมสร้างสุจริต จิตอาสา 🤝", credit: "0-2-0" }] },
+  "อ.ศุภชัย สิริเมษสุธา": { phone: "062-254-2522", subjects: [{ code: "31700-0003", name: "หลักการเลี้ยงสัตว์ 🐥", credit: "0-2-0" }] },
+  "อ.กันตภณ บุญกิจสุวรรณ": { phone: "061-795-9994", subjects: [{ code: "31700-0016", name: "ปฏิบัติงานเกษตร 🚜", credit: "0-4-2" }] }
 };
 
 function autoFillTeacher(tName) {
+  const fn = document.getElementById('fn');
   if (!tName || !TEACHER_DATA[tName]) {
-    document.getElementById('fp').value = ''; document.getElementById('fn').value = '';
-    document.getElementById('fc-code').value = ''; document.getElementById('fcr').value = '';
+    document.getElementById('fp').value = ''; 
+    fn.innerHTML = '<option value="">เลือกผู้สอนเพื่อดึงชื่อวิชาอัตโนมัติ</option>';
+    fn.disabled = true;
+    fn.style.background = '#f0f0f0'; fn.style.color = '#666';
+    document.getElementById('fc-code').value = ''; 
+    document.getElementById('fcr').value = '';
     return;
   }
   const info = TEACHER_DATA[tName];
   document.getElementById('fp').value = info.phone;
-  document.getElementById('fn').value = info.name;
-  document.getElementById('fc-code').value = info.code;
-  document.getElementById('fcr').value = info.credit;
+  
+  fn.innerHTML = '';
+  info.subjects.forEach(subj => {
+    const opt = document.createElement('option');
+    opt.value = subj.name;
+    opt.textContent = subj.name;
+    opt.dataset.code = subj.code;
+    opt.dataset.credit = subj.credit;
+    fn.appendChild(opt);
+  });
+  
+  fn.disabled = false;
+  fn.style.background = 'var(--surf)'; 
+  fn.style.color = 'var(--txt)';
+  
+  fillSubjDetails();
   document.getElementById('f-act').value = '';
+}
+
+function fillSubjDetails() {
+  const fn = document.getElementById('fn');
+  if(fn.selectedIndex >= 0 && fn.options[fn.selectedIndex].value !== "") {
+    const opt = fn.options[fn.selectedIndex];
+    document.getElementById('fc-code').value = opt.dataset.code || '';
+    document.getElementById('fcr').value = opt.dataset.credit || '';
+  }
 }
 
 loadData();
